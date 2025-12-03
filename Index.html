@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Expenses Tracker</title>
+  <meta name="theme-color" content="#667eea">
+  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTXkgRXhwZW5zZXMgVHJhY2tlciIsInNob3J0X25hbWUiOiJFeHBlbnNlcyIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwidGhlbWVfY29sb3IiOiIjNjY3ZWVhIn0=">
+  <style>
+    body {
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      margin: 0;
+    }
+
+    #app {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    }
+
+    h1 {
+      color: #333;
+      text-align: center;
+      margin-bottom: 10px;
+    }
+
+    p {
+      text-align: center;
+      color: #666;
+    }
+
+    .input-section {
+      margin: 30px 0;
+      padding: 20px;
+      background: #f8f9fa;
+      border-radius: 10px;
+    }
+
+    h2 {
+      color: #333;
+      font-size: 20px;
+      margin-bottom: 15px;
+    }
+
+    input, select {
+      width: 100%;
+      padding: 12px;
+      margin-bottom: 10px;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 16px;
+      box-sizing: border-box;
+    }
+
+    input:focus, select:focus {
+      border-color: #667eea;
+      outline: none;
+    }
+
+    button {
+      width: 100%;
+      padding: 15px;
+      background: #667eea;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #5568d3;
+    }
+
+    .expenses-list {
+      margin: 30px 0;
+    }
+
+    #expensesList {
+      margin-top: 15px;
+    }
+
+    .expense-item {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+      border-left: 4px solid #667eea;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .expense-info {
+      flex: 1;
+    }
+
+    .expense-info strong {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .expense-info p {
+      margin: 5px 0;
+      color: #666;
+      font-size: 16px;
+      text-align: left;
+    }
+
+    .expense-amount {
+      font-size: 20px;
+      font-weight: bold;
+      color: #e74c3c;
+    }
+
+    .total-section {
+      background: #667eea;
+      color: white;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+      margin-top: 20px;
+    }
+
+    .total-section h2 {
+      color: white;
+      margin: 0;
+    }
+
+    .delete-btn {
+      width: auto;
+      padding: 8px 12px;
+      background: #e74c3c;
+      margin-left: 10px;
+      font-size: 18px;
+    }
+
+    .delete-btn:hover {
+      background: #c0392b;
+    }
+
+    .mode-btn {
+      flex: 1;
+      padding: 12px;
+      background: #f0f0f0;
+      color: #666;
+      border: 2px solid #ddd;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .mode-btn.active {
+      background: #667eea;
+      color: white;
+      border-color: #667eea;
+    }
+
+    .mode-btn:hover {
+      background: #5568d3;
+      color: white;
+    }
+
+    .settlement-section {
+      background: #fff3cd;
+      border: 2px solid #ffc107;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+    }
+
+    .settlement-section h2 {
+      color: #333;
+      margin-bottom: 15px;
+      font-size: 20px;
+    }
+
+    .settlement-item {
+      background: white;
+      padding: 12px;
+      margin-bottom: 8px;
+      border-radius: 8px;
+      border-left: 4px solid #ffc107;
+      font-size: 16px;
+      color: #333;
+    }
+  </style>
+</head>
+<body>
+  <div id="app">
+    <h1>💰My Expenses Tracker💰</h1>
+    <p>Let's track your பணம்!!</p>
+    
+    <div class="input-section">
+      <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+        <button id="personalMode" class="mode-btn active">Personal Expenses</button>
+        <button id="groupMode" class="mode-btn">Group Expenses</button>
+      </div>
+
+      <h2 id="formTitle">Add New Expense</h2>
+      
+      <input type="number" id="amount" placeholder="Amount (€)" />   
+      <input type="text" id="description" placeholder="What did you buy?" />
+      <label for="date" style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">🗓️ When did you spend?</label>
+      <input type="date" id="date" />
+      
+      <div id="groupFields" style="display: none;">
+        <input type="text" id="paidBy" placeholder="Who paid?" />
+        <input type="text" id="participants" placeholder="Participants (comma separated, e.g., John, Sarah, Mike)" /> 
+        <select id="splitType">
+          <option value="equal">Split Equally</option>
+          <option value="custom">Custom Split</option>
+        </select>
+        <div id="customSplitFields" style="display: none;">
+          <p style="font-size: 14px; color: #666; margin: 10px 0;">Enter custom amounts for each person:</p>
+          <div id="customAmounts"></div>
+        </div>
+      </div>
+      
+      <select id="category">
+        <option value="">Select Category</option>
+        <option value="Food">🍔 Food</option>
+        <option value="Transport">🚗 Transport</option>
+        <option value="Shopping">🛍️ Shopping</option>
+        <option value="Bills">📄 Bills</option>
+        <option value="Entertainment">🎮 Entertainment</option>
+        <option value="Other">📦 Other</option>
+      </select>
+      
+      <button id="addBtn">Add Expense</button>
+    </div>
+
+    <div class="expenses-list">
+      <h2>My Expenses</h2>
+      <div id="expensesList">
+        <p style="text-align: center; color: #999;">No expenses yet. Add your first one!</p>
+      </div>
+    </div>
+
+    <div class="total-section">
+      <h2>Total Spent: €<span id="totalAmount">0.00</span></h2>
+    </div>
+
+    <div class="settlement-section">
+      <h2>💰 Who Owes Whom?</h2>
+      <div id="settlements">
+        <p style="text-align: center; color: #999;">No group expenses yet!</p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const amountInput = document.getElementById('amount');
+    const descriptionInput = document.getElementById('description');
+    const categorySelect = document.getElementById('category');
+    const addBtn = document.getElementById('addBtn');
+    const expensesList = document.getElementById('expensesList');
+    const totalAmount = document.getElementById('totalAmount');
+    const personalModeBtn = document.getElementById('personalMode');
+    const groupModeBtn = document.getElementById('groupMode');
+    const groupFields = document.getElementById('groupFields');
+    const formTitle = document.getElementById('formTitle');
+
+    let expenses = [];
+    let currentMode = 'personal';
+
+    function addExpense() {
+      const amount = amountInput.value;
+      const description = descriptionInput.value;
+      const category = categorySelect.value;
+      const date = document.getElementById('date').value;
+      
+      if (!amount || !description || !category || !date) {
+        alert('Please fill in all fields!');
+        return;
+      }
+      
+      const expense = {
+        id: Date.now(),
+        amount: parseFloat(amount),
+        description: description,
+        category: category,
+        date: date,
+        mode: currentMode
+      };
+      
+      if (currentMode === 'group') {
+        const paidBy = document.getElementById('paidBy').value;
+        const participants = document.getElementById('participants').value;
+        const splitType = document.getElementById('splitType').value;
+        
+        if (!paidBy || !participants) {
+          alert('Please fill in who paid and participants!');
+          return;
+        }
+        
+        const participantList = participants.split(',').map(function(p) { return p.trim(); });
+        expense.paidBy = paidBy;
+        expense.participants = participantList;
+        expense.splitType = splitType;
+        
+        if (splitType === 'equal') {
+          expense.perPerson = (parseFloat(amount) / participantList.length).toFixed(2);
+        } else {
+          const customAmounts = {};
+          const customInputs = document.querySelectorAll('.custom-amount');
+          let totalCustom = 0;
+          
+          customInputs.forEach(function(input) {
+            const person = input.getAttribute('data-person');
+            const amt = parseFloat(input.value) || 0;
+            customAmounts[person] = amt;
+            totalCustom += amt;
+          });
+          
+          if (Math.abs(totalCustom - parseFloat(amount)) > 0.01) {
+            alert('Custom amounts must equal total!');
+            return;
+          }
+          
+          expense.customAmounts = customAmounts;
+        }
+      }
+      
+      expenses.push(expense);
+      
+      amountInput.value = '';
+      descriptionInput.value = '';
+      categorySelect.value = '';
+      document.getElementById('date').value = '';
+      
+      if (currentMode === 'group') {
+        document.getElementById('paidBy').value = '';
+        document.getElementById('participants').value = '';
+        document.getElementById('customSplitFields').style.display = 'none';
+      }
+      
+      displayExpenses();
+      updateTotal();
+      saveExpenses();
+    }
+
+    function displayExpenses() {
+      if (expenses.length === 0) {
+        expensesList.innerHTML = '<p style="text-align: center; color: #999;">No expenses yet. Add your first one!</p>';
+        calculateSettlements();
+        return;
+      }
+      
+      expensesList.innerHTML = '';
+      
+      expenses.forEach(function(expense) {
+        const div = document.createElement('div');
+        div.className = 'expense-item';
+        
+        let groupInfo = '';
+        if (expense.mode === 'group') {
+          let splitText = '';
+          if (expense.splitType === 'custom' && expense.customAmounts) {
+            const parts = [];
+            for (let i = 0; i < expense.participants.length; i++) {
+              const p = expense.participants[i];
+              parts.push(p + ': €' + expense.customAmounts[p]);
+            }
+            splitText = 'Custom - ' + parts.join(', ');
+          } else {
+            splitText = '€' + expense.perPerson + ' per person';
+          }
+          groupInfo = '<p style="margin: 5px 0; color: #667eea; font-size: 14px;">👥 Paid by: ' + expense.paidBy + ' | ' + splitText + '</p><p style="margin: 5px 0; color: #999; font-size: 12px;">With: ' + expense.participants.join(', ') + '</p>';
+        }
+        
+        div.innerHTML = '<div class="expense-info"><strong>' + expense.category + '</strong><p style="margin: 5px 0; color: #666;">' + expense.description + '</p><p style="margin: 5px 0; color: #999; font-size: 14px;">📅 ' + expense.date + '</p>' + groupInfo + '</div><div class="expense-amount">€' + expense.amount.toFixed(2) + '</div><button class="delete-btn" onclick="deleteExpense(' + expense.id + ')">🗑️</button>';
+        
+        expensesList.appendChild(div);
+      });
+      
+      calculateSettlements();
+    }
+
+    function updateTotal() {
+      let total = 0;
+      for (let i = 0; i < expenses.length; i++) {
+        total += expenses[i].amount;
+      }
+      totalAmount.textContent = total.toFixed(2);
+    }
+
+    function deleteExpense(id) {
+      const newExpenses = [];
+      for (let i = 0; i < expenses.length; i++) {
+        if (expenses[i].id !== id) {
+          newExpenses.push(expenses[i]);
+        }
+      }
+      expenses = newExpenses;
+      displayExpenses();
+      updateTotal();
+      saveExpenses();
+    }
+
+    function saveExpenses() {
+      localStorage.setItem('myExpenses', JSON.stringify(expenses));
+    }
+
+    function loadExpenses() {
+      const saved = localStorage.getItem('myExpenses');
+      if (saved) {
+        expenses = JSON.parse(saved);
+        displayExpenses();
+        updateTotal();
+      }
+    }
+
+    function calculateSettlements() {
+      const div = document.getElementById('settlements');
+      const groupExpenses = [];
+      
+      for (let i = 0; i < expenses.length; i++) {
+        if (expenses[i].mode === 'group') {
+          groupExpenses.push(expenses[i]);
+        }
+      }
+      
+      if (groupExpenses.length === 0) {
+        div.innerHTML = '<p style="text-align: center; color: #999;">No group expenses yet!</p>';
+        return;
+      }
+      
+      const balances = {};
+      
+      for (let i = 0; i < groupExpenses.length; i++) {
+        const exp = groupExpenses[i];
+        
+        if (!balances[exp.paidBy]) {
+          balances[exp.paidBy] = 0;
+        }
+        balances[exp.paidBy] += exp.amount;
+        
+        if (exp.splitType === 'custom' && exp.customAmounts) {
+          for (let j = 0; j < exp.participants.length; j++) {
+            const person = exp.participants[j];
+            if (!balances[person]) {
+              balances[person] = 0;
+            }
+            balances[person] -= exp.customAmounts[person];
+          }
+        } else {
+          const perPerson = parseFloat(exp.perPerson);
+          for (let j = 0; j < exp.participants.length; j++) {
+            const person = exp.participants[j];
+            if (!balances[person]) {
+              balances[person] = 0;
+            }
+            balances[person] -= perPerson;
+          }
+        }
+      }
+      
+      let html = '';
+      const people = Object.keys(balances);
+      
+      for (let i = 0; i < people.length; i++) {
+        const person = people[i];
+        const bal = balances[person];
+        
+        if (Math.abs(bal) > 0.01) {
+          if (bal > 0) {
+            html += '<div class="settlement-item">✅ ' + person + ' should receive €' + bal.toFixed(2) + '</div>';
+          } else {
+            html += '<div class="settlement-item">❌ ' + person + ' owes €' + Math.abs(bal).toFixed(2) + '</div>';
+          }
+        }
+      }
+      
+      if (html === '') {
+        html = '<p style="text-align: center; color: green;">✅ All settled!</p>';
+      }
+      
+      div.innerHTML = html;
+    }
+
+    function generateCustomFields() {
+      const input = document.getElementById('participants').value;
+      const div = document.getElementById('customAmounts');
+      
+      if (!input) {
+        div.innerHTML = '<p style="color: #999; font-size: 14px;">Enter participants first!</p>';
+        return;
+      }
+      
+      const people = input.split(',');
+      let html = '';
+      
+      for (let i = 0; i < people.length; i++) {
+        const person = people[i].trim();
+        html += '<div style="margin-bottom: 10px;"><label style="display: block; font-size: 14px; color: #666; margin-bottom: 5px;">' + person + ':</label><input type="number" class="custom-amount" data-person="' + person + '" placeholder="€" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;" /></div>';
+      }
+      
+      div.innerHTML = html;
+    }
+
+    personalModeBtn.addEventListener('click', function() {
+      currentMode = 'personal';
+      personalModeBtn.classList.add('active');
+      groupModeBtn.classList.remove('active');
+      groupFields.style.display = 'none';
+      formTitle.textContent = 'Add New Expense';
+    });
+
+    groupModeBtn.addEventListener('click', function() {
+      currentMode = 'group';
+      groupModeBtn.classList.add('active');
+      personalModeBtn.classList.remove('active');
+      groupFields.style.display = 'block';
+      formTitle.textContent = 'Add Group Expense';
+    });
+
+    document.getElementById('splitType').addEventListener('change', function() {
+      const customDiv = document.getElementById('customSplitFields');
+      if (this.value === 'custom') {
+        customDiv.style.display = 'block';
+        generateCustomFields();
+      } else {
+        customDiv.style.display = 'none';
+      }
+    });
+
+    document.getElementById('participants').addEventListener('blur', function() {
+      if (document.getElementById('splitType').value === 'custom') {
+        generateCustomFields();
+      }
+    });
+
+    addBtn.addEventListener('click', addExpense);
+    loadExpenses();
+  </script>
+</body>
+</html>
