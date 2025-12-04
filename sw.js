@@ -1,8 +1,8 @@
 const CACHE_NAME = 'expenses-app-v1';
 const urlsToCache = [
-  '/expenses-app/',
-  '/expenses-app/index.html'
-];
+     './',
+     './index.html'
+   ];
 
 self.addEventListener('install', function(event) {
   event.waitUntil(
