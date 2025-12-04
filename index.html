@@ -5,54 +5,67 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>My Expenses Tracker</title>
   <meta name="theme-color" content="#667eea">
-  <link rel="manifest" href="data:application/json;base64,eyJuYW1lIjoiTXkgRXhwZW5zZXMgVHJhY2tlciIsInNob3J0X25hbWUiOiJFeHBlbnNlcyIsInN0YXJ0X3VybCI6Ii8iLCJkaXNwbGF5Ijoic3RhbmRhbG9uZSIsImJhY2tncm91bmRfY29sb3IiOiIjZmZmZmZmIiwidGhlbWVfY29sb3IiOiIjNjY3ZWVhIn0=">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Expenses">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="icon.png">
   <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
     body {
       background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-      font-family: Arial, sans-serif;
-      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+      padding: 0;
       margin: 0;
+      min-height: 100vh;
+      overflow-x: hidden;
     }
 
     #app {
       max-width: 600px;
       margin: 0 auto;
       background: white;
-      padding: 30px;
-      border-radius: 15px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      min-height: 100vh;
+      padding: 20px;
     }
 
     h1 {
       color: #333;
       text-align: center;
-      margin-bottom: 10px;
+      margin-bottom: 5px;
+      font-size: 24px;
     }
 
     p {
       text-align: center;
       color: #666;
+      margin-bottom: 20px;
     }
 
     .input-section {
-      margin: 30px 0;
+      margin: 20px 0;
       padding: 20px;
       background: #f8f9fa;
-      border-radius: 10px;
+      border-radius: 15px;
     }
 
     h2 {
       color: #333;
-      font-size: 20px;
+      font-size: 18px;
       margin-bottom: 15px;
     }
 
     input, select {
       width: 100%;
-      padding: 12px;
-      margin-bottom: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
       border: 2px solid #ddd;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 16px;
       box-sizing: border-box;
     }
@@ -64,14 +77,19 @@
 
     button {
       width: 100%;
-      padding: 15px;
+      padding: 16px;
       background: #667eea;
       color: white;
       border: none;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 16px;
       font-weight: bold;
       cursor: pointer;
+      transition: all 0.3s;
+    }
+
+    button:active {
+      transform: scale(0.98);
     }
 
     button:hover {
@@ -79,7 +97,7 @@
     }
 
     .expenses-list {
-      margin: 30px 0;
+      margin: 20px 0;
     }
 
     #expensesList {
@@ -87,14 +105,15 @@
     }
 
     .expense-item {
-      background: white;
+      background: #f8f9fa;
       padding: 15px;
-      margin-bottom: 10px;
-      border-radius: 8px;
+      margin-bottom: 12px;
+      border-radius: 12px;
       border-left: 4px solid #667eea;
       display: flex;
       justify-content: space-between;
       align-items: center;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
     }
 
     .expense-info {
@@ -102,14 +121,14 @@
     }
 
     .expense-info strong {
-      font-size: 18px;
+      font-size: 16px;
       color: #333;
     }
 
     .expense-info p {
       margin: 5px 0;
       color: #666;
-      font-size: 16px;
+      font-size: 14px;
       text-align: left;
     }
 
@@ -117,28 +136,33 @@
       font-size: 20px;
       font-weight: bold;
       color: #e74c3c;
+      margin-right: 10px;
     }
 
     .total-section {
-      background: #667eea;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       color: white;
-      padding: 20px;
-      border-radius: 10px;
+      padding: 25px;
+      border-radius: 15px;
       text-align: center;
       margin-top: 20px;
+      box-shadow: 0 4px 12px rgba(102, 126, 234, 0.4);
     }
 
     .total-section h2 {
       color: white;
       margin: 0;
+      font-size: 22px;
     }
 
     .delete-btn {
       width: auto;
-      padding: 8px 12px;
+      min-width: 45px;
+      padding: 10px;
       background: #e74c3c;
       margin-left: 10px;
-      font-size: 18px;
+      font-size: 20px;
+      border-radius: 10px;
     }
 
     .delete-btn:hover {
@@ -147,14 +171,15 @@
 
     .mode-btn {
       flex: 1;
-      padding: 12px;
+      padding: 14px;
       background: #f0f0f0;
       color: #666;
       border: 2px solid #ddd;
-      border-radius: 8px;
+      border-radius: 12px;
       font-size: 14px;
       font-weight: bold;
       cursor: pointer;
+      transition: all 0.3s;
     }
 
     .mode-btn.active {
@@ -163,39 +188,43 @@
       border-color: #667eea;
     }
 
-    .mode-btn:hover {
-      background: #5568d3;
-      color: white;
-    }
-
     .settlement-section {
-      background: #fff3cd;
+      background: #fff9e6;
       border: 2px solid #ffc107;
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 15px;
       margin-top: 20px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
 
     .settlement-section h2 {
       color: #333;
       margin-bottom: 15px;
-      font-size: 20px;
+      font-size: 18px;
     }
 
     .settlement-item {
       background: white;
-      padding: 12px;
-      margin-bottom: 8px;
-      border-radius: 8px;
+      padding: 14px;
+      margin-bottom: 10px;
+      border-radius: 10px;
       border-left: 4px solid #ffc107;
-      font-size: 16px;
+      font-size: 15px;
       color: #333;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+    }
+
+    label {
+      display: block;
+      margin-bottom: 5px;
+      color: #666;
+      font-size: 14px;
     }
   </style>
 </head>
 <body>
   <div id="app">
-    <h1>💰My Expenses Tracker💰</h1>
+    <h1>💰 My Expenses Tracker 💰</h1>
     <p>Let's track your பணம்!!</p>
     
     <div class="input-section">
@@ -206,14 +235,14 @@
 
       <h2 id="formTitle">Add New Expense</h2>
       
-      <input type="number" id="amount" placeholder="Amount (€)" />   
+      <input type="number" id="amount" placeholder="Amount (€)" step="0.01" />   
       <input type="text" id="description" placeholder="What did you buy?" />
-      <label for="date" style="display: block; margin-bottom: 5px; color: #666; font-size: 14px;">🗓️ When did you spend?</label>
+      <label for="date">🗓️ When did you spend?</label>
       <input type="date" id="date" />
       
       <div id="groupFields" style="display: none;">
         <input type="text" id="paidBy" placeholder="Who paid?" />
-        <input type="text" id="participants" placeholder="Participants (comma separated, e.g., John, Sarah, Mike)" /> 
+        <input type="text" id="participants" placeholder="Participants (comma separated)" /> 
         <select id="splitType">
           <option value="equal">Split Equally</option>
           <option value="custom">Custom Split</option>
@@ -257,6 +286,13 @@
   </div>
 
   <script>
+    // Register Service Worker for PWA
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('sw.js').catch(function(err) {
+        console.log('Service Worker registration failed:', err);
+      });
+    }
+
     const amountInput = document.getElementById('amount');
     const descriptionInput = document.getElementById('description');
     const categorySelect = document.getElementById('category');
@@ -270,6 +306,9 @@
 
     let expenses = [];
     let currentMode = 'personal';
+
+    // Set today's date as default
+    document.getElementById('date').valueAsDate = new Date();
 
     function addExpense() {
       const amount = amountInput.value;
@@ -334,7 +373,7 @@
       amountInput.value = '';
       descriptionInput.value = '';
       categorySelect.value = '';
-      document.getElementById('date').value = '';
+      document.getElementById('date').valueAsDate = new Date();
       
       if (currentMode === 'group') {
         document.getElementById('paidBy').value = '';
@@ -500,7 +539,7 @@
       
       for (let i = 0; i < people.length; i++) {
         const person = people[i].trim();
-        html += '<div style="margin-bottom: 10px;"><label style="display: block; font-size: 14px; color: #666; margin-bottom: 5px;">' + person + ':</label><input type="number" class="custom-amount" data-person="' + person + '" placeholder="€" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;" /></div>';
+        html += '<div style="margin-bottom: 10px;"><label style="display: block; font-size: 14px; color: #666; margin-bottom: 5px;">' + person + ':</label><input type="number" class="custom-amount" data-person="' + person + '" placeholder="€" step="0.01" style="width: 100%; padding: 10px; border: 2px solid #ddd; border-radius: 8px;" /></div>';
       }
       
       div.innerHTML = html;
