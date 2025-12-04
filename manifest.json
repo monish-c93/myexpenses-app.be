@@ -2,7 +2,7 @@
   "name": "My Expenses Tracker",
   "short_name": "Expenses",
   "description": "Track your personal and group expenses",
-  "start_url": "/expenses-app/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#667eea",
